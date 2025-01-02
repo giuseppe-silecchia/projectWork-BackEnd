@@ -35,6 +35,13 @@ def add_room():
     db.session.commit()
     return jsonify({'message': 'Room added successfully'}), 201
 
+@main.route('/rooms/<int:id>', methods=['DELETE'])
+def delete_room(id: int):
+    room = Room.query.get_or_404(id)
+
+    db.session.delete(room)
+    db.session.commit()
+    return jsonify({'message': 'Room deleted'})
 
 @main.route('/bookings', methods=['GET'])
 def get_bookings():
@@ -48,7 +55,6 @@ def get_booking(id: int):
     booking = Booking.query.get_or_404(id)
     result = booking.to_dict()
     return jsonify(result)
-
 
 @main.route('/bookings', methods=['POST'])
 def create_booking():
@@ -71,7 +77,7 @@ def cancel_booking(id: int):
 
     db.session.delete(booking)
     db.session.commit()
-    return jsonify({'message': 'Booking cancelled and room is now available'})
+    return jsonify({'message': 'Booking deleted, room is now available'})
 
 
 @main.route('/rooms/available', methods=['GET'])
