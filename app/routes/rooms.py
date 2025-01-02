@@ -1,18 +1,23 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy import not_
 from ..models import Room, Booking
 from .. import db
 from datetime import datetime
 
 rooms_bp = Blueprint('rooms_bp', __name__)
 
+
 @rooms_bp.route('/rooms', methods=['GET'])
 def get_rooms():
-    rooms = Room.query.all()
-    result = [
-        room.to_dict()
-        for room in rooms
-    ]
-    return jsonify(result)
+    try:
+        rooms = Room.query.all()
+        result = [
+            room.to_dict()
+            for room in rooms
+        ]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
 @rooms_bp.route('/rooms/<int:id>', methods=['GET'])
@@ -24,14 +29,21 @@ def get_room(id: int):
 
 @rooms_bp.route('/rooms', methods=['POST'])
 def add_room():
-    data = request.get_json()
-    new_room = Room(
-        room_number=data['room_number'],
-        max_people=data['max_people']
-    )
-    db.session.add(new_room)
-    db.session.commit()
-    return jsonify({'message': 'Room added successfully'}), 201
+    try:
+        data = request.get_json()
+        if 'room_number' not in data or 'max_people' not in data:
+            return jsonify({'message': 'room_number and max_people are required'}), 400
+
+        new_room = Room(
+            room_number=data['room_number'],
+            max_people=data['max_people']
+        )
+        db.session.add(new_room)
+        db.session.commit()
+        return jsonify({'message': 'Room added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
 
 @rooms_bp.route('/rooms/<int:id>', methods=['DELETE'])
 def delete_room(id: int):
@@ -40,6 +52,7 @@ def delete_room(id: int):
     db.session.delete(room)
     db.session.commit()
     return jsonify({'message': 'Room deleted'})
+
 
 @rooms_bp.route('/rooms/available', methods=['GET'])
 def get_available_rooms():
@@ -64,7 +77,7 @@ def get_available_rooms():
         Booking.check_out > check_in_date
     ).subquery()
 
-    available_rooms = Room.query.filter(~Room.id.in_(unavailable_rooms)).all()
+    available_rooms = Room.query.filter(not_(Room.id.in_(unavailable_rooms))).all()
 
     result = [room.to_dict() for room in available_rooms]
 
