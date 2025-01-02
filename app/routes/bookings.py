@@ -68,6 +68,42 @@ def create_booking():
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
+@bookings_bp.route('/bookings/<int:id>', methods=['PATCH'])
+def update_booking(id: int):
+    booking = Booking.query.get_or_404(id)
+    data = request.get_json()
+
+    if 'customer_name' in data:
+        booking.customer_name = data['customer_name']
+    if 'check_in' in data:
+        try:
+            booking.check_in = datetime.strptime(data['check_in'], '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'message': 'Invalid date format for check_in. Use YYYY-MM-DD'}), 400
+    if 'check_out' in data:
+        try:
+            booking.check_out = datetime.strptime(data['check_out'], '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'message': 'Invalid date format for check_out. Use YYYY-MM-DD'}), 400
+    if 'room_id' in data:
+        # Verifica se la stanza è già prenotata per le nuove date
+        room_id = data['room_id']
+        conflicting_booking = Booking.query.filter(
+            Booking.room_id == room_id,
+            Booking.id != id,
+            Booking.check_in < booking.check_out,
+            Booking.check_out > booking.check_in
+        ).first()
+
+        if conflicting_booking:
+            return jsonify({'message': 'Room is already booked for the selected dates'}), 400
+
+        booking.room_id = room_id
+
+    db.session.commit()
+    return jsonify({'message': 'Booking updated successfully', 'booking': booking.to_dict()}), 200
+
+
 @bookings_bp.route('/bookings/<int:id>', methods=['DELETE'])
 def cancel_booking(id: int):
     booking = Booking.query.get_or_404(id)
