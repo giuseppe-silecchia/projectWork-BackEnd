@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..models import Booking, Room
+from ..models import Booking
 from .. import db
 from datetime import datetime
 
@@ -31,7 +31,7 @@ def get_booking(id: int):
 @jwt_required()
 def create_booking():
     try:
-
+        current_user_id = get_jwt_identity()  # ID dell'utente autenticato
         data = request.get_json()
 
         # Check del formato delle date
@@ -62,7 +62,8 @@ def create_booking():
             customer_name=data['customer_name'],
             check_in=check_in_date,
             check_out=check_out_date,
-            room_id=room_id
+            room_id=room_id,         # Associa la prenotazione alla stanza
+            user_id=current_user_id  # Associa la prenotazione all'utente autenticato
         )
         db.session.add(new_booking)
         db.session.commit()
