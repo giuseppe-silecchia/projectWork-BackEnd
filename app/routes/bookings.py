@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
-from ..models import Booking, Room
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from ..models import Booking
 from .. import db
 from datetime import datetime
 
@@ -7,6 +9,7 @@ bookings_bp = Blueprint('bookings_bp', __name__)
 
 
 @bookings_bp.route('/bookings', methods=['GET'])
+@jwt_required()
 def get_bookings():
     try:
         bookings = Booking.query.all()
@@ -17,6 +20,7 @@ def get_bookings():
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['GET'])
+@jwt_required()
 def get_booking(id: int):
     booking = Booking.query.get_or_404(id)
     result = booking.to_dict()
@@ -24,9 +28,10 @@ def get_booking(id: int):
 
 
 @bookings_bp.route('/bookings', methods=['POST'])
+@jwt_required()
 def create_booking():
     try:
-
+        current_user_id = get_jwt_identity()  # ID dell'utente autenticato
         data = request.get_json()
 
         # Check del formato delle date
@@ -57,7 +62,8 @@ def create_booking():
             customer_name=data['customer_name'],
             check_in=check_in_date,
             check_out=check_out_date,
-            room_id=room_id
+            room_id=room_id,         # Associa la prenotazione alla stanza
+            user_id=current_user_id  # Associa la prenotazione all'utente autenticato
         )
         db.session.add(new_booking)
         db.session.commit()
@@ -69,6 +75,7 @@ def create_booking():
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['PATCH'])
+@jwt_required()
 def update_booking(id: int):
     booking = Booking.query.get_or_404(id)
     data = request.get_json()
@@ -105,9 +112,25 @@ def update_booking(id: int):
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['DELETE'])
+@jwt_required()
 def cancel_booking(id: int):
     booking = Booking.query.get_or_404(id)
 
     db.session.delete(booking)
     db.session.commit()
     return jsonify({'message': 'Booking deleted, room is now available'})
+
+
+@bookings_bp.route('/bookings/user', methods=['GET'])
+@jwt_required()
+def get_user_bookings():
+    try:
+        current_user_id = get_jwt_identity()  # ID dell'utente autenticato
+
+        user_bookings = Booking.query.filter_by(user_id=current_user_id).all()  # Recupera le prenotazioni dell'utente
+
+        result = [booking.to_dict() for booking in user_bookings]
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
