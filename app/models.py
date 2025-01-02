@@ -15,6 +15,9 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
+
+    bookings = db.relationship('Booking', backref='user', lazy=True)            # Relazione con il modello Booking
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -26,7 +29,7 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)                                # Id univoco dell'entità
     room_number = db.Column(db.String(10), nullable=False, unique=True)         # Numero della stanza (es. 101)
     max_people = db.Column(db.Integer, nullable=False)                          # Numero massimo ospiti
-    bookings = db.relationship('Booking', backref='room', lazy=True)            # relazione (collegamento con il modello Booking)
+    bookings = db.relationship('Booking', backref='room', lazy=True)            # Relazione con il modello Booking
 
     def to_dict(self):
         return {
@@ -42,6 +45,7 @@ class Booking(db.Model):
     check_in = db.Column(db.Date, nullable=False)                               # Data check-in della prenotazione
     check_out = db.Column(db.Date, nullable=False)                              # Data check-out della prenotazione
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)   # Chiave esterna che collega la prenotazione a una stanza
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)   # Chiave esterna che collega la prenotazione a un utente
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))     # Data e ora in cui è stata creata la prenotazione
 
     def to_dict(self):
