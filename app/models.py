@@ -9,6 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)                                # Id univoco dell'entità
     email = db.Column(db.String(80), unique=True, nullable=False)               # Email dell'utente
     password_hash = db.Column(db.String(128), nullable=False)                   # Password (hash) dell'utente
+    isAdmin = db.Column(db.Boolean, nullable=False, default=False)
     bookings = db.relationship('Booking', backref='user', lazy=True)            # Relazione con il modello Booking
 
     def set_password(self, password):
@@ -20,7 +21,8 @@ class User(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "email": self.email
+            "email": self.email,
+            "isAdmin": self.isAdmin
         }
 
 
