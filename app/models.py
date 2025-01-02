@@ -4,19 +4,18 @@ from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)                                # Id univoco dell'entità
     email = db.Column(db.String(80), unique=True, nullable=False)               # Email dell'utente
     password_hash = db.Column(db.String(128), nullable=False)                   # Password (hash) dell'utente
+    bookings = db.relationship('Booking', backref='user', lazy=True)            # Relazione con il modello Booking
 
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
-
-
-    bookings = db.relationship('Booking', backref='user', lazy=True)            # Relazione con il modello Booking
 
     def to_dict(self):
         return {
