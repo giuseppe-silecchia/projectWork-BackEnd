@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 from sqlalchemy import not_
 from ..models import Room, Booking
 from .. import db
@@ -8,6 +9,7 @@ rooms_bp = Blueprint('rooms_bp', __name__)
 
 
 @rooms_bp.route('/rooms', methods=['GET'])
+@jwt_required()
 def get_rooms():
     try:
         rooms = Room.query.all()
@@ -21,6 +23,7 @@ def get_rooms():
 
 
 @rooms_bp.route('/rooms/<int:id>', methods=['GET'])
+@jwt_required()
 def get_room(id: int):
     room = Room.query.get_or_404(id)
     result = room.to_dict()
@@ -28,6 +31,7 @@ def get_room(id: int):
 
 
 @rooms_bp.route('/rooms', methods=['POST'])
+@jwt_required()
 def add_room():
     try:
         data = request.get_json()
@@ -46,6 +50,7 @@ def add_room():
 
 
 @rooms_bp.route('/rooms/<int:id>', methods=['PATCH'])
+@jwt_required()
 def update_room(id: int):
     room = Room.query.get_or_404(id)
     data = request.get_json()
@@ -57,9 +62,10 @@ def update_room(id: int):
 
     db.session.commit()
     return jsonify({'message': 'Room updated successfully', 'room': room.to_dict()}), 200
-    
+
 
 @rooms_bp.route('/rooms/<int:id>', methods=['DELETE'])
+@jwt_required()
 def delete_room(id: int):
     room = Room.query.get_or_404(id)
 
@@ -69,6 +75,7 @@ def delete_room(id: int):
 
 
 @rooms_bp.route('/rooms/available', methods=['GET'])
+@jwt_required()
 def get_available_rooms():
     check_in = request.args.get('check_in')
     check_out = request.args.get('check_out')

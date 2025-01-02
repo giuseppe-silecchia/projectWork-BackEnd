@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
+
 from ..models import Booking, Room
 from .. import db
 from datetime import datetime
@@ -7,6 +9,7 @@ bookings_bp = Blueprint('bookings_bp', __name__)
 
 
 @bookings_bp.route('/bookings', methods=['GET'])
+@jwt_required()
 def get_bookings():
     try:
         bookings = Booking.query.all()
@@ -17,6 +20,7 @@ def get_bookings():
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['GET'])
+@jwt_required()
 def get_booking(id: int):
     booking = Booking.query.get_or_404(id)
     result = booking.to_dict()
@@ -24,6 +28,7 @@ def get_booking(id: int):
 
 
 @bookings_bp.route('/bookings', methods=['POST'])
+@jwt_required()
 def create_booking():
     try:
 
@@ -69,6 +74,7 @@ def create_booking():
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['PATCH'])
+@jwt_required()
 def update_booking(id: int):
     booking = Booking.query.get_or_404(id)
     data = request.get_json()
@@ -105,6 +111,7 @@ def update_booking(id: int):
 
 
 @bookings_bp.route('/bookings/<int:id>', methods=['DELETE'])
+@jwt_required()
 def cancel_booking(id: int):
     booking = Booking.query.get_or_404(id)
 
