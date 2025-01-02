@@ -16,7 +16,11 @@ python -m venv .venv
 ```bash
 pip install requirements.txt
 ```
-    
+4. Avvia il back-end:
+```bash
+python run.py
+```
+ 
 ## Autori
 
 - Silecchia Giuseppe [@giuseppe-silecchia](https://www.github.com/giuseppe-silecchia)
