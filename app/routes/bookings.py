@@ -119,3 +119,18 @@ def cancel_booking(id: int):
     db.session.delete(booking)
     db.session.commit()
     return jsonify({'message': 'Booking deleted, room is now available'})
+
+
+@bookings_bp.route('/bookings/user', methods=['GET'])
+@jwt_required()
+def get_user_bookings():
+    try:
+        current_user_id = get_jwt_identity()  # ID dell'utente autenticato
+
+        user_bookings = Booking.query.filter_by(user_id=current_user_id).all()  # Recupera le prenotazioni dell'utente
+
+        result = [booking.to_dict() for booking in user_bookings]
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
