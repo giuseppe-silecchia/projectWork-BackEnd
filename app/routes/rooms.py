@@ -45,6 +45,20 @@ def add_room():
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
+@rooms_bp.route('/rooms/<int:id>', methods=['PATCH'])
+def update_room(id: int):
+    room = Room.query.get_or_404(id)
+    data = request.get_json()
+
+    if 'room_number' in data:
+        room.room_number = data['room_number']
+    if 'max_people' in data:
+        room.max_people = data['max_people']
+
+    db.session.commit()
+    return jsonify({'message': 'Room updated successfully', 'room': room.to_dict()}), 200
+    
+
 @rooms_bp.route('/rooms/<int:id>', methods=['DELETE'])
 def delete_room(id: int):
     room = Room.query.get_or_404(id)
