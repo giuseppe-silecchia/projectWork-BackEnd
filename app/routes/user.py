@@ -45,8 +45,9 @@ def update_current_user():
     if 'email' in data:
         user.email = data['email']
     if 'password' in data:
+        print('changing password')
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-        user.password = hashed_password
+        user.password_hash = hashed_password
 
     db.session.commit()
     return jsonify({'message': 'User updated successfully'})
