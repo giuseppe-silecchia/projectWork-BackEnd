@@ -38,8 +38,12 @@ def update_current_user():
     user = User.query.get_or_404(user_id)
 
     data = request.get_json()
-    if 'username' in data:
-        user.username = data['username']
+    if 'first_name' in data:
+        user.firstName = data['first_name']
+    if 'last_name' in data:
+        user.lastName = data['last_name']
+    if 'email' in data:
+        user.email = data['email']
     if 'password' in data:
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         user.password = hashed_password
@@ -61,10 +65,14 @@ def update_user(user_id):
     user = User.query.get_or_404(user_id)
 
     data = request.get_json()
-    if 'username' in data:
-        user.username = data['username']
+    if 'first_name' in data:
+        user.firstName = data['first_name']
+    if 'last_name' in data:
+        user.lastName = data['last_name']
+    if 'email' in data:
+        user.email = data['email']
     if 'isAdmin' in data:
-        user.role_id = data['isAdmin']
+        user.isAdmin = data['isAdmin']
     if 'password' in data:
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         user.password = hashed_password
