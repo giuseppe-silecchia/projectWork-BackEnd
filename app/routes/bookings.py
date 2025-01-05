@@ -59,7 +59,6 @@ def create_booking():
 
         # 6. Crea la prenotazione
         new_booking = Booking(
-            customer_name=data['customer_name'],
             check_in=check_in_date,
             check_out=check_out_date,
             room_id=room_id,         # Associa la prenotazione alla stanza
@@ -80,8 +79,6 @@ def update_booking(id: int):
     booking = Booking.query.get_or_404(id)
     data = request.get_json()
 
-    if 'customer_name' in data:
-        booking.customer_name = data['customer_name']
     if 'check_in' in data:
         try:
             booking.check_in = datetime.strptime(data['check_in'], '%Y-%m-%d')
