@@ -52,26 +52,31 @@ def add_room():
 @rooms_bp.route('/rooms/<int:id>', methods=['PATCH'])
 @jwt_required()
 def update_room(id: int):
-    room = Room.query.get_or_404(id)
-    data = request.get_json()
+    try:
+        room = Room.query.get_or_404(id)
+        data = request.get_json()
 
-    if 'room_number' in data:
-        room.room_number = data['room_number']
-    if 'max_people' in data:
-        room.max_people = data['max_people']
+        if 'room_number' in data:
+            room.room_number = data['room_number']
+        if 'max_people' in data:
+            room.max_people = data['max_people']
 
-    db.session.commit()
-    return jsonify({'message': 'Room updated successfully', 'room': room.to_dict()}), 200
+        db.session.commit()
+        return jsonify({'message': 'Room updated successfully', 'room': room.to_dict()}), 200
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
 @rooms_bp.route('/rooms/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_room(id: int):
     room = Room.query.get_or_404(id)
-
-    db.session.delete(room)
-    db.session.commit()
-    return jsonify({'message': 'Room deleted'})
+    try:
+        db.session.delete(room)
+        db.session.commit()
+        return jsonify({'message': 'Room deleted'})
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
 @rooms_bp.route('/rooms/available', methods=['GET'])
