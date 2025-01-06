@@ -13,6 +13,11 @@ def register():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
+    firstName = data.get('firstName')
+    lastName = data.get('lastName')
+
+    if not firstName or not lastName:
+        return jsonify({"message": "First name and last Name are required"}), 400
 
     if not email or not password:
         return jsonify({"message": "Email and password are required"}), 400
@@ -26,7 +31,7 @@ def register():
         return jsonify({'message': 'Password must be at least 8 characters long'}), 400
 
     # Crea un nuovo utente e cifra la password
-    new_user = User(email=email)
+    new_user = User(email=email, firstName=firstName, lastName=lastName)
     new_user.set_password(password)
 
     # Salva l'utente nel database

@@ -59,10 +59,9 @@ def create_booking():
 
         # 6. Crea la prenotazione
         new_booking = Booking(
-            customer_name=data['customer_name'],
             check_in=check_in_date,
             check_out=check_out_date,
-            room_id=room_id,         # Associa la prenotazione alla stanza
+            room_id=room_id,  # Associa la prenotazione alla stanza
             user_id=current_user_id  # Associa la prenotazione all'utente autenticato
         )
         db.session.add(new_booking)
@@ -80,8 +79,6 @@ def update_booking(id: int):
     booking = Booking.query.get_or_404(id)
     data = request.get_json()
 
-    if 'customer_name' in data:
-        booking.customer_name = data['customer_name']
     if 'check_in' in data:
         try:
             booking.check_in = datetime.strptime(data['check_in'], '%Y-%m-%d')
@@ -115,10 +112,12 @@ def update_booking(id: int):
 @jwt_required()
 def cancel_booking(id: int):
     booking = Booking.query.get_or_404(id)
-
-    db.session.delete(booking)
-    db.session.commit()
-    return jsonify({'message': 'Booking deleted, room is now available'})
+    try:
+        db.session.delete(booking)
+        db.session.commit()
+        return jsonify({'message': 'Booking deleted, room is now available'})
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
 
 @bookings_bp.route('/bookings/user', methods=['GET'])

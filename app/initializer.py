@@ -10,6 +10,8 @@ def create_default_user(bcrypt: Bcrypt):
         admin_user = User(
             email="mario.rossi@gmail.com",
             password_hash=hashed_password,
+            firstName="Mario",
+            lastName="Rossi",
         )
         db.session.add(admin_user)
         db.session.commit()
@@ -24,7 +26,9 @@ def create_admin_user(bcrypt: Bcrypt):
         admin_user = User(
             email="admin@gmail.com",
             password_hash=hashed_password,
-            isAdmin=True
+            isAdmin=True,
+            firstName="Admin",
+            lastName="Admin",
         )
         db.session.add(admin_user)
         db.session.commit()
