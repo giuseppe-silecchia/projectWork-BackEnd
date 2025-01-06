@@ -60,5 +60,6 @@ class Booking(db.Model):
             'id': self.id,
             'check_in': self.check_in.strftime('%Y-%m-%d'),
             'check_out': self.check_out.strftime('%Y-%m-%d'),
-            'room_id': self.room_id
+            'room_id': self.room_id,
+            'user_id': self.user_id
         }

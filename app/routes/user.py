@@ -53,6 +53,26 @@ def update_current_user():
     return jsonify({'message': 'User updated successfully'})
 
 
+@users_bp.route('/users', methods=['GET'])
+@jwt_required()
+def get_system_users():
+    user_requester_id = get_jwt_identity()
+    user_requester = User.query.get_or_404(user_requester_id)
+
+    if not user_requester.isAdmin:
+        return jsonify({'message': 'Permission denied'}), 403
+
+    try:
+        users = User.query.all()
+        result = [
+            user.to_dict()
+            for user in users
+        ]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+
 # Route per aggiornare un utente specifico (solo per admin)
 @users_bp.route('/users/<int:user_id>', methods=['PATCH'])
 @jwt_required()
