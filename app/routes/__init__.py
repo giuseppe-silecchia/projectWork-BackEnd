@@ -5,7 +5,7 @@ from .rooms import rooms_bp
 from .bookings import bookings_bp
 from .user import users_bp
 
-
+#funzione per registrare ogni modulo(blueprint) nell'aplicazione
 def register_routes(app):
     app.register_blueprint(rooms_bp, url_prefix='/api')
     app.register_blueprint(bookings_bp, url_prefix='/api')

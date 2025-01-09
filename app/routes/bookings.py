@@ -5,9 +5,10 @@ from ..models import Booking
 from .. import db
 from datetime import datetime
 
+#Definisce il modulo per le prenotazioni
 bookings_bp = Blueprint('bookings_bp', __name__)
 
-
+#Endpoint per recueprare tutte le prenotazioni
 @bookings_bp.route('/bookings', methods=['GET'])
 @jwt_required()
 def get_bookings():
@@ -18,7 +19,7 @@ def get_bookings():
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+#Endpoint per recueprare le informazioni di una specifica prenotazione 
 @bookings_bp.route('/bookings/<int:id>', methods=['GET'])
 @jwt_required()
 def get_booking(id: int):
@@ -26,7 +27,7 @@ def get_booking(id: int):
     result = booking.to_dict()
     return jsonify(result)
 
-
+#Endpoint per creare una prenotazione 
 @bookings_bp.route('/bookings', methods=['POST'])
 @jwt_required()
 def create_booking():
@@ -72,7 +73,7 @@ def create_booking():
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+#Endpoint per modificare una prenotazione 
 @bookings_bp.route('/bookings/<int:id>', methods=['PATCH'])
 @jwt_required()
 def update_booking(id: int):
@@ -107,7 +108,7 @@ def update_booking(id: int):
     db.session.commit()
     return jsonify({'message': 'Booking updated successfully', 'booking': booking.to_dict()}), 200
 
-
+#Endpoint per eliminare una prenotazione 
 @bookings_bp.route('/bookings/<int:id>', methods=['DELETE'])
 @jwt_required()
 def cancel_booking(id: int):
@@ -119,7 +120,7 @@ def cancel_booking(id: int):
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+#Endpointe per recuperare le prenotazioni dell'utente 
 @bookings_bp.route('/bookings/user', methods=['GET'])
 @jwt_required()
 def get_user_bookings():

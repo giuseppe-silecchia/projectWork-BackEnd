@@ -5,11 +5,12 @@ from ..models import Room, Booking
 from .. import db
 from datetime import datetime
 
+#Definisce il modulo per le stanza
 rooms_bp = Blueprint('rooms_bp', __name__)
 
-
+# Endpoint per recuperare tutte le stanze
 @rooms_bp.route('/rooms', methods=['GET'])
-@jwt_required()
+@jwt_required()     #Autenticazione richiesta
 def get_rooms():
     try:
         rooms = Room.query.all()
@@ -21,7 +22,7 @@ def get_rooms():
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+# Endpoint per recuperare le informazioni di una specifica stanza
 @rooms_bp.route('/rooms/<int:id>', methods=['GET'])
 @jwt_required()
 def get_room(id: int):
@@ -30,6 +31,7 @@ def get_room(id: int):
     return jsonify(result)
 
 
+# Endpoint per creare una stanza
 @rooms_bp.route('/rooms', methods=['POST'])
 @jwt_required()
 def add_room():
@@ -48,7 +50,7 @@ def add_room():
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+# Endpoint per aggiornare una stanza specifica
 @rooms_bp.route('/rooms/<int:id>', methods=['PATCH'])
 @jwt_required()
 def update_room(id: int):
@@ -65,7 +67,7 @@ def update_room(id: int):
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+# Endpoint per eliminare una stanza specifica
 @rooms_bp.route('/rooms/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_room(id: int):
@@ -77,7 +79,7 @@ def delete_room(id: int):
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
-
+# Endpoint per recuperare le stanze libere nel periodo checkin - checkout
 @rooms_bp.route('/rooms/available', methods=['GET'])
 @jwt_required()
 def get_available_rooms():
