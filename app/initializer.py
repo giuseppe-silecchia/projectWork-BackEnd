@@ -1,6 +1,7 @@
 from app.models import User, db, Room
 from flask_bcrypt import Bcrypt
 
+# Script per inizializzare il database: crea un utente di prova e un utente amministraotre e crea 4 stanze
 
 def create_default_user(bcrypt: Bcrypt):
     # Verifica che l'utente "mario.rossi@gmail.com" non esista

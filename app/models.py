@@ -20,7 +20,7 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
-    def to_dict(self):
+    def to_dict(self):  # metodo per trasformare la classe in un dizionario
         return {
             "id": self.id,
             "email": self.email,
@@ -36,7 +36,7 @@ class Room(db.Model):
     max_people = db.Column(db.Integer, nullable=False)  # Numero massimo ospiti
     bookings = db.relationship('Booking', backref='room', lazy=True)  # Relazione con il modello Booking
 
-    def to_dict(self):
+    def to_dict(self):  # metodo per trasformare la classe in un dizionario
         return {
             'id': self.id,
             'room_number': self.room_number,
@@ -55,7 +55,7 @@ class Booking(db.Model):
     created_at = db.Column(db.DateTime,
                            default=datetime.now(timezone.utc))  # Data e ora in cui è stata creata la prenotazione
 
-    def to_dict(self):
+    def to_dict(self):  # metodo per trasformare la classe in un dizionario
         return {
             'id': self.id,
             'check_in': self.check_in.strftime('%Y-%m-%d'),

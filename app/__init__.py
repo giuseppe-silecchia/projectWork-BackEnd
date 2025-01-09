@@ -12,7 +12,7 @@ def create_app():
     CORS(app, resources={
         r"/api/*": {"origins": ["*", "http://localhost:4200"], "methods": ["PUT", "POST", "GET", "PATCH", "DELETE"],
                     "max_age": 6000}})
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hotel.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hotel.db'     # Utilizziamo un db locale di nome hotel.db
     app.config['JWT_SECRET_KEY'] = '636f3dc78f7924c396e28a336c6f1'  # Definisce la chiave segreta usata dall'app Flask.
     app.config['JWT_VERIFY_SUB'] = False
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=2)  # Definisce la durata (validità) del token

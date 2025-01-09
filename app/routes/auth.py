@@ -4,10 +4,11 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from ..models import User
 from .. import db
 
+#Definisce il modulo per le operazioni di autenticazione/registrazione
 auth_bp = Blueprint('auth_bp', __name__)
 bcrypt = Bcrypt()
 
-
+# Endpoint per registrare un nuovo utente
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -40,7 +41,7 @@ def register():
 
     return jsonify({"message": "User registered successfully"}), 201
 
-
+# Endpoint per far accedere un utente al sistema
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -52,12 +53,13 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
+        #Crea access token utilizzando come identità il codice univoco dell'utente
         access_token = create_access_token(identity=user.id)
         return jsonify({"access_token": access_token}), 200
 
     return jsonify({"message": "Invalid credentials"}), 401
 
-
+# Endpoint per cambiare la password dell'utente
 @auth_bp.route('/update-password', methods=['PATCH'])
 @jwt_required()
 def update_password():
