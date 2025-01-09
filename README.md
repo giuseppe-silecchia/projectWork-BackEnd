@@ -14,7 +14,7 @@ python -m venv .venv
 ```
 3. Scarica tutte le librerie necessarie:
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 4. Avvia il back-end:
 ```bash
